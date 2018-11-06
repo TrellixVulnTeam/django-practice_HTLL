@@ -224,11 +224,24 @@ class TeacherDetailView(View):
 
     def get(self, request, teacher_id):
         teacher = Teacher.objects.get(id=teacher_id)
+        org = CourseOrg.objects.get(id=teacher.org.id)
         hot_teachers = Teacher.objects.all().order_by('-fav_nums')
         courses = Course.objects.filter(teacher=teacher)
+        has_teacher_faved = False
+        has_org_faved = False
+
+        if request.user.is_authenticated():
+            if UserFavorite.objects.filter(user=request.user, fav_id=org.id, fav_type=2):  # 查询此机构是否被收藏
+                has_org_faved = True
+
+            if UserFavorite.objects.filter(user=request.user, fav_id=teacher.id, fav_type=3):  # 查询此教师是否被收藏
+                has_teacher_faved = True
+
         return render(request, 'teacher-detail.html', {'teacher': teacher,
                                                        'courses': courses,
                                                        'hot_teachers': hot_teachers,
+                                                       'has_org_faved': has_org_faved,
+                                                       'has_teacher_faved': has_teacher_faved
                                                        }
                       )
 
