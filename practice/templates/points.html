@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学习心得</title>
+</head>
+<body>
+  <div>
+      关于url的问题，在HTML页面中：href="{% url '文件中对应页面的name' %}"，（注意name要加单引号），这样就直接跳转到目标页面，不会造成url叠加，如果
+      写为：href="目标页面的name"，则会造成url叠加，这样不好。
+  </div>
+  <div>
+      关于基于类的视图说明，都写在了users.views中的LoginView类的注释中
+  </div>
+  <div>
+      关于表单验证：将表单(比如RegisterForm)传回前端页面，表单中对应的字段会自动生成相应的输入框，而且标签的name都和RegisterForm字段名对应
+  </div>
+    <div>
+        对于每个视图都有get和post两种方式访问，get访问是从其他页面点击而到达url，分配到此视图，而post是该视图所对应的页面上表单提交到达url，分配到此视图，
+        html，url，视图是松散的耦合关系
+    </div>
+    <div>
+        在后端视图views中对前端传来的数据进行操作，前端访问后端视图的方式有get和post，提取数据的方式为：request.GET.get(),和
+        request.POST.get(),使用get方法像后台提交数据：用href="?数据名=数据值"，例如在机构列表页面中用城市过其他方式对机构进行排序，
+        向后端传递城市名称;使用post方法向后台提交数据：form method="post"，使用最多
+    </div>
+    <div>
+        从前端页面通过url向后端的视图传递参数方式：href="{% url "目标url的name" 所要传递的参数名 %}"，在url中配置参数名，例如从机构列表
+        到机构详情页
+
+    </div>
+    <div>
+        在视图函数中可以随时判断前端的登录情况，用request.user.is_authenticated方法判断，也可以根据request.user来取得当前登陆的用户
+        例如：user = Userprofile.object.get(user=request.user)
+    </div>
+    <div>
+        在model中有的字段是choice类型，比如
+        degree = models.CharField(choices=(("cj", "初级"), ("zj", "中级"), ("gj", "高级")), max_length=2, verbose_name="等级")
+        若在前端页面上显示degree，默认显示的是缩写cj，zj，gj，这是要用方法course.get_degree_display来显示中文全称。
+    </div>
+    <div>
+        在课程详情页面想要显示课程的章节及其个数，课程-章节是一对多，则可以在课程的model中定义一个方法：
+        def get_zj_nums(self):
+            return self.lesson_set.all().count()
+        这个方法可以在前端页面上直接调用，比如{{ course.get_zj_nums }}注意调用时不用括号。
+
+        同理，在operation中定义了UserCourse,它用ForeignKey分别连接了Course和User，这样就可以根据它来找到学习此course
+        的User，在Course的model中定义一个方法：
+            def get_learn_users(self):
+                return self.usercourse_set.all()
+        可以在前端直接调用这个方法{% for learn_user in course.get_learn_users %}{{ learn_user.user.image }}{% endfor %}
+        从而可以拿到学这门course的user的image
+    </div>
+    <div>
+        模板页面继承在子页面中还要有{% load staticfiles %}
+    </div>
+    <div>
+        课程资料下载操作：先定义CourseResource模型，在其中定义download字段（FileField类型），在views中编写函数将CourseResource
+        实例传到前端，下载的超链接：<span ><i class="aui-iconfont aui-icon-file"></i>&nbsp;&nbsp;{{ resource.name }}</span>
+                               <a href="{{ MEDIA_URL }}{{ resource.download }}"></a>
+    </div>
+    <div>
+        在后期开发过程中若需要增加数据库模型的字段，如果增加的字段为CharField类型，可以设定为default=""，若增加的是具有外键类型的字段，
+        则要设定null=True,blank=True
+    </div>
+    <div>
+        在用基于类的视图函数时，不能使用@login_require的装饰器，装饰器只能修饰函数。若要在视图函数中验证登录，则要编写一个验证的类，例子在
+        utils 中的mixin_utils中
+
+    </div>
+    <div>
+        关于条目分页：在视图view中用Paginator生成分页后在前端页面中列表条目循环要用Paginator生成的条目加上.object_list，才能进行分页
+
+    </div>
+
+
+
+</body>
+</html>

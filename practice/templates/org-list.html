@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}课程机构列表{% endblock %}
+{% block content %}<section>
+	<div class="wp butler_list_box list">
+	<div class='left'>
+		<div class="listoptions">
+			<ul>
+				<li>
+					<h2>机构类别</h2>
+					<div class="cont">
+                        <a href="??city={{ city.id }} "><span class="{% ifequal category "" %}active2{% endifequal %}">全部</span></a>
+
+{#                              用于分页的写法#}
+                            <a href="?cate=pxjg&city={{ city_id }}"><span class="{% ifequal category "pxjg" %}active2{% endifequal %}">培训机构</span></a>
+                            <a href="?cate=gx&city={{ city_id }}"><span class="{% ifequal category "gx" %}active2{% endifequal %}">高校</span></a>
+                            <a href="?cate=gr&city={{ city_id }}"><span class="{% ifequal category "gr" %}active2{% endifequal %}">个人</span></a>
+
+					</div>
+				</li>
+				<li>
+					<h2>所在地区</h2>
+					<div class="more">更多</div>
+					<div class="cont">
+                        <a href="?cate={{ category }}"><span class="{% ifequal city_id "" %}active2{% endifequal %}">全部</span></a>
+{#                                                             若传回来的city_id是个空字符串则表示没有选中城市，“全部”高亮。#}
+                               {% for city in all_cities %}
+{#                                注意：对选中的城市进行显著标识#}
+                                    <a href="?city={{ city.id }}&cate={{ category }}"><span class="{% ifequal city_id city.id|stringformat:"i" %}active2{% endifequal %}">{{ city.name }}</span></a>
+{#                                                                           将传回来的city_id和城市的id进行比对，若想等表示选中该城市，该城市就高亮显示#}
+                               {% endfor %}
+
+
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="all">共<span class="key">{{ orgs_count }}</span>家</div>
+		<div class="butler_list company list">
+
+		<div class="layout">
+			<div class="head">
+				<ul class="tab_header">
+					<li class="{% ifequal sort "" %}active{% endifequal %}"><a href="?cate={{ category }}&city={{ city_id }}">全部</a> </li>
+					<li class="{% ifequal sort "students" %}active{% endifequal %}"><a href="?sort=students&cate={{ category }}&city={{ city_id }}">学习人数 &#8595;</a></li>
+					<li class="{% ifequal sort "courses" %}active{% endifequal %}"><a href="?sort=courses&cate={{ category }}&city={{ city_id }}">课程数 &#8595;</a></li>
+{#                    排序时要兼顾城市和机构类别，而选择城市或机构类别时忽略排序#}
+				</ul>
+			</div>
+             {% for org in all_orgs.object_list %}
+                <dl class="des difdes">
+                    <dt>
+                        <a href="{% url "org:org_home" org.id %}">
+{#                            向url传递参数org.id#}
+                            <img width="200" height="120" class="scrollLoading" data-url="{{ MEDIA_URL }}org/2018/10/timg_DNJ7ohT.jpg"/>
+                        </a>
+                    </dt>
+                    <dd>
+                        <div class="clearfix">
+                             <a href="{% url "org:org_home" org.id %}">
+                                 <h1>{{ org.name }}</h1>
+                                 <div class="pic fl">
+
+                                         <img src="{% static "images/authentication.png" %}"/>
+
+                                         <img src="{% static "images/gold.png" %}"/>
+
+                                 </div>
+                             </a>
+                        </div>
+                        <ul class="cont">
+                            <li class="first"><p class="pic9">课程数：<span>1</span></p><p class="c7">学习人数：<span>1000</span></p></li>
+                            <li class="c8" style="padding-left:18px;">北京市海淀区中关村北大街</li>
+                            <li class="pic10" style="padding-left:18px;">经典课程：
+
+                                    <a href="/diary/19/">c语言基础入门</a>
+
+                                    <a href="/diary/16/">数据库基础</a>
+
+                            </li>
+                        </ul>
+                    </dd>
+                    <div class="buy start_groupbuy jsShowPerfect2" data-id="22"><br/>联系<br/>服务</div>
+                </dl>
+                {% endfor %}
+
+
+		</div>
+		 <div class="pageturn">
+            <div class="pagelist">
+    {% if all_orgs.has_previous %}
+{#        如果有上一页，显示上一页，没有就不显示#}
+        <li class="long"><a href="?{{ all_orgs.previous_page_number.querystring }}">上一页</a> </li>
+    {% endif %}
+
+    {% for page in all_orgs.pages %}
+        {% if page %}
+            {% ifequal page all_orgs.number %}
+                <span class="current page">{{ page }}</span>
+            {% else %}
+                <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+            {% endifequal %}
+        {% else %}
+            <li class="none"><a href="">...</a> </li>
+        {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+{#        <a href="?{{ page_obj.next_page_number.querystring }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a>#}
+        <li class="long"><a href="?{{ all_orgs.next_page_number.querystring }}">下一页</a> </li>
+{#    {% else %}#}
+{#        <span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>#}
+    {% endif %}
+</div>
+        </div>
+		</div>
+
+	</div>
+	<div class="right companyright">
+			<div class="head">我要学习</div>
+			<form class="rightform" id="jsStayForm">
+				<div>
+                    <img src="{% static "images/rightform1.png" %}"/>
+                    <input type="text" name="name" id="companyName" placeholder="名字" maxlength="25" />
+                </div>
+				<div>
+                    <img src="{% static "images/rightform2.png" %}"/>
+                    <input type="text" name="mobile" id="companyMobile" placeholder="联系电话"/>
+                </div>
+				<div>
+                    <img src="{% static "images/rightform3.png" %}"/>
+                    <input type="text" name="course_name" id="companyAddress" placeholder="课程名" maxlength="50" />
+                </div>
+                <p class="error company-tips" id="jsCompanyTips"></p>
+				<input class="btn" type="text" id="jsStayBtn" value="立即咨询 " />
+            </form>
+		</div>
+
+		<div class="right companyrank layout">
+			<div class="head">授课机构排名</div>
+
+                 {% for org in hot_orgs %}
+                <dl class="des">
+
+                    <dt class="num fl">{{ forloop.counter }}</dt>
+{#                    自动循环生成排名顺序#}
+                    <dd>
+                        <a href="/company/2/"><h1>{{ org.name }}</h1></a>
+                        <p>{{ org.address }}</p>
+                    </dd>
+                </dl>
+                     {% endfor %}
+{#                <dl class="des">#}
+{#                    <dt class="num fl">2</dt>#}
+{#                    <dd>#}
+{#                        <a href="/company/2/"><h1>慕课网2</h1></a>#}
+{#                        <p>深圳市</p>#}
+{#                    </dd>#}
+{#                </dl>#}
+{##}
+{#                <dl class="des">#}
+{#                    <dt class="num fl">3</dt>#}
+{#                    <dd>#}
+{#                        <a href="/company/2/"><h1>北京大学</h1></a>#}
+{#                        <p>北京市</p>#}
+{#                    </dd>#}
+{#                </dl>#}
+
+
+
+
+		</div>
+        </div>
+</section>{% endblock %}
+
+
+
+
+
+
+
+
+
