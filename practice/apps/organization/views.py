@@ -90,6 +90,7 @@ class OrgHomeView(View):
                 has_fav = True
 
         all_courses = course_org.course_set.all()[:3]  # 这里用到反向的检索，由机构检索该机构的所有课程，取前3个
+        # all_courses = Course.objects.filter(course_org=course_org)  # 这个是正向检索，正常思维
         all_teachers = course_org.teacher_set.all()[:]  # 同理检索机构的教师，取前3个
         current_page = 'home'  # current_page用于检测当前页面来修改标签属性从而改变外观
         return render(request, 'org-detail-homepage.html', {

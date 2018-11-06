@@ -72,6 +72,20 @@
         关于条目分页：在视图view中用Paginator生成分页后在前端页面中列表条目循环要用Paginator生成的条目加上.object_list，才能进行分页
 
     </div>
+    <div>
+        关于数据关系间的相互引用，相互查找：
+
+        Teacher类中：org = models.ForeignKey(CourseOrg, verbose_name="所属机构")
+
+        如果现在已知一个org = CourseOrg.objects.get(id=org_id)，
+        1.想要找到此org下的某位老师:teacher = Teacher.objects.get(org=org)
+        2.想要找到此org中所有的teacher：
+        all_teachers = Teacher.objects.filter(org=org)  # 正向检索
+        all_teachers = course_org.teacher_set.all()  # 反向检索
+
+        如果现在已知一个teacher:teacher = Teacher.objects.get(id=teacher_id)，检索他所在的机构:
+        org = CourseOrg.objects.get(id=teacher.org.id)  # 注意这里的机构id可以像前端页面那样取出
+    </div>
 
 
 
