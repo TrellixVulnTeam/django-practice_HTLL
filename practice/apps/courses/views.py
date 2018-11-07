@@ -4,6 +4,7 @@ from django.views.generic.base import View  # 用于基于类的函数
 from .models import Course, CourseResource, Video, Teacher
 from operation.models import UserFavorite, CourseComment, UserCourse
 from django.http import HttpResponse
+from django.db.models import Q  # Q用于并操作
 from utils.mixin_utils import LoginRequiredMixin  # 引入登录验证的类
 # Create your views here.
 
@@ -12,6 +13,14 @@ class CoursesListView(View):
     def get(self, request):
         all_courses = Course.objects.all()
         hot_courses = all_courses.order_by('-fav_nums')[:3]
+
+        # 主页全局搜索中的课程搜索
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            all_courses = all_courses.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords) |
+                                             Q(detail__icontains=search_keywords))  # 注意这里是双下划线
+
+
         latest = all_courses.order_by("-add_time")
         sort = request.GET.get("sort", "")
         if sort == "hot":
@@ -150,6 +159,8 @@ class VideoPlayView(View):
                                                     'related_courses': related_courses,
                                                     'video': video}
                       )
+
+
 
 
 

@@ -86,6 +86,50 @@
         如果现在已知一个teacher:teacher = Teacher.objects.get(id=teacher_id)，检索他所在的机构:
         org = CourseOrg.objects.get(id=teacher.org.id)  # 注意这里的机构id可以像前端页面那样取出
     </div>
+    <div>
+        对于首页导航栏选中状态的操作：当选择公开课时，无论进入课程列表还是课程详情页，此选项都应该是高亮状态，
+        由于这个导航栏是从主模板继承而来，如果使用从视图函数向前端传一个参数来判断则不可行，这里用到请求路径
+        判断的方法比较好：
+        在主模板中：
+        <li {% if request.path|slice:'8' == '/courses' %}class="active"{% endif %}>
+
+                    <a href="{% url 'courses:courses_list' %}">
+                        公开课<img class="hot" src="{% static "images/nav_hot.png" %}">
+                    </a>
+                </li>
+        因为有关公开课的url都在courses的namespace中，所以这里只要判断请求的相对路径，前面的/不能少
+    </div>
+    <div>
+        全局搜索中的判断：
+        js代码：
+                //顶部搜索栏搜索方法
+        function search_click(){
+            var type = $('#jsSelectOption').attr('data-value'),
+                keywords = $('#search_keywords').val(),
+                request_url = '';
+            if(keywords == ""){
+                return
+            }
+            if(type == "course"){
+                request_url = "/courses/list?keywords="+keywords
+            }else if(type == "teacher"){
+                request_url = "/org/teachers/list?keywords="+keywords
+            }else if(type == "org"){
+                request_url = "/org/list?keywords="+keywords
+            }
+            window.location.href = request_url
+        }
+        后端逻辑：
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            all_courses = all_courses.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords) |
+                                             Q(detail__icontains=search_keywords))  # 注意这里是双下划线
+
+        注意：全局搜索作用的是最后传到前端的列表
+
+
+    </div>
+
 
 
 

@@ -8,6 +8,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from courses.models import Course, Lesson
 from users.models import UserProfile
 from operation.models import UserFavorite
+from django.db.models import Q  # Q用于并操作
 from .models import CourseOrg, City, Teacher
 # Create your views here.
 
@@ -18,9 +19,15 @@ class OrgView(View):
         all_orgs = CourseOrg.objects.all()
         all_orgs_1 = all_orgs
 
+        # 主页全局搜索中的机构搜索
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            all_orgs = all_orgs.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords))
+                                            # 注意这里是双下划线
+
         # 对机构进行点击量排名
         hot_orgs = all_orgs.order_by("-click_nums")[:3]
-        # 对机构进行点击量排名
+        # 对机构进行学生数和课程数量排名
         sort = request.GET.get("sort", "")
         if sort == "students":
             all_orgs = all_orgs.order_by("-students")
@@ -29,8 +36,6 @@ class OrgView(View):
             all_orgs = all_orgs.order_by("-course_nums")
         else:
             pass
-
-        # 对机构进行点击量排名
 
         # 筛选城市
         city_id = request.GET.get('city', "")
@@ -146,6 +151,7 @@ class OrgTeacherView(View):
         course_org = CourseOrg.objects.get(id=org_id)
         has_fav = False
 
+
         course_org = CourseOrg.objects.get(id=org_id)
         if request.user.is_authenticated():
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):  # 查询此机构是否被收藏
@@ -194,6 +200,13 @@ class TeachersListView(View):
 
     def get(self, request):
         teachers = Teacher.objects.all()
+
+        # 主页全局搜索中的机构搜索
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            teachers = teachers.filter(Q(name__icontains=search_keywords))
+            # 注意这里是双下划线
+
         sort = request.GET.get('sort', '')
         if sort == 'hot':
             teachers = Teacher.objects.all().order_by('-fav_nums')
