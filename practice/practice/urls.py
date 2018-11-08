@@ -35,6 +35,9 @@ urlpatterns = [
     url(r'^forget/$', ForgetPwdView.as_view(), name="forget_pwd"),
     url(r'^reset/(P<reset_code>.*)/$', ResetView.as_view(), name="reset_pwd"),
 
+    # 用户组
+    url(r'^users/', include('users.urls', namespace='users')),
+
     # 机构组
     url(r'^org/', include('organization.urls', namespace='org')),
 
@@ -43,6 +46,8 @@ urlpatterns = [
 
     # 配置上传文件的访问处理，因为有的图片是放在media中，不是static中，所以要重新配置
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
+
+
 
 
 

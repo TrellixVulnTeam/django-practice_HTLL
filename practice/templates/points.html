@@ -129,6 +129,35 @@
 
 
     </div>
+    <div>
+        在个人信息页面，需要读取用户资料，这是不用从后端视图中传递，直接从request.user中取得即可。如{{ request.user.name }}或
+        {{ request.user.nickname }}
+
+    </div>
+    <div>
+        有关模型表单在organization的forms.py中,
+        第一种情况是用模型表单接住前端传来的数据，保存时加上commit=true，则直接保存为数
+        据库中独立的数据，如：
+                        user_ask_form = UserAskForm(request.POST)
+                        if user_ask_form.is_valid():
+                            user_ask = user_ask_form.save(commit=True)  # 模型表单直接保存成一组数据到数据库
+        第二种情况是保存到某个已有数据中，相当于数据更新：
+        upload_image_form = UploadImageForm(request.POST, request.FILES, instance=request.user)
+        在后面加上instance=某个已有实例，则调用save()将数据保存在该实例中。
+        另外，每个模型表单都有一个属性.cleaned_data['image']，代表该表单已通过审查的字段的数据，比如这个代表通过审查的
+        image字段中的数据
+    </div>
+    <div>
+        再次强调：模型表单中的字段和model中定义的字段名称相同，前端页面返回时数据名称也要和表单中的名字相同！
+    </div>
+    <div>
+        对于前端的Ajax操作，后端只能用HttpResponse返回json，具体看users.views中个人中心修改密码
+    </div>
+    <div>
+        在html文件中，url可以用{% url '目标url的name' %}这种方式来表示，文件中的js代码中需要访问url也可以这样表示，但
+        如果js代码在从外部单独文件引入的，则js文件中的url不能这样表示，因为这是django的模板语言，js不认识。要使用传统的
+        'namespace/目标url'
+    </div>
 
 
 

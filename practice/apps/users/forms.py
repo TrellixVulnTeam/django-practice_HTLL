@@ -1,4 +1,5 @@
 from django import forms
+from .models import UserProfile
 from captcha.fields import CaptchaField
 
 
@@ -28,3 +29,60 @@ class ModifyPwdForm(forms.Form):
     password1 = forms.CharField(required=True)
     password2 = forms.CharField(required=True)
     captcha = CaptchaField(error_messages={"invalid": "验证码错误"})
+
+
+class UploadImageForm(forms.ModelForm):
+    """
+    用户头像表单
+    """
+    class Meta:
+        model = UserProfile # 表示针对UserProfile模型
+        fields = ['image']  # 挑选想要的字段，只要求有图片就行
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
