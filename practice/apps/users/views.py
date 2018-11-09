@@ -8,6 +8,8 @@ from django.contrib.auth.hashers import make_password  # 用于生成密码
 
 from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm, ForgetPwdForm, ModifyPwdForm, UploadImageForm
+from operation.models import UserCourse, UserFavorite
+from organization.models import CourseOrg, Teacher
 from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
 from django.http import HttpResponse
@@ -206,10 +208,55 @@ class UpdatePwdView(View):
             return HttpResponse(json.dumps(modify_form.errors), content_type='application/json')
 
 
+class MyCoursesView(LoginRequiredMixin, View):
+    """
+    用户个人课程
+    """
+    def get(self, request):
+        user = request.user
+        user_courses = UserCourse.objects.filter(user=user)
+
+        return render(request, 'usercenter-mycourse.html', {
+            'user_courses': user_courses
+        }
+                      )
 
 
+class MyFavoriteOrgsView(LoginRequiredMixin, View):
+    """
+    用户收藏的机构
+    """
+    def get(self, request):
+        user = request.user
+        orgs_list = []  # 设定一个数组用于存放收藏的机构
+        user_fav_orgs = UserFavorite.objects.filter(user=user, fav_type=2)
+        for org in user_fav_orgs:
+            org_id = org.fav_id
+            fav_org = CourseOrg.objects.get(id=org_id)
+            orgs_list.append(fav_org)
+        return render(request, 'usercenter-fav-org.html', {
+            'user_fav_orgs': orgs_list
+        }
+                      )
 
 
+class MyFavoriteTeachersView(LoginRequiredMixin, View):
+    """
+    用户收藏的讲师
+    """
+    def get(self, request):
+        user = request.user
+
+        teachers_list = []  # 设定一个数组用于存放收藏的机构
+        user_fav_teachers = UserFavorite.objects.filter(user=user, fav_type=3)
+        for teacher in user_fav_teachers:
+            teacher_id = teacher.fav_id
+            fav_teacher = Teacher.objects.get(id=teacher_id)
+            teachers_list.append(fav_teacher)
+        return render(request, 'usercenter-fav-teacher.html', {
+            'user_fav_teachers': teachers_list
+        }
+                      )
 
 
 
