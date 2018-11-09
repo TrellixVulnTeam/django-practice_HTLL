@@ -185,6 +185,7 @@ class UploadImageView(LoginRequiredMixin, View):
             # 浏览器自动解析成json数据
             pass
 
+
 class UpdatePwdView(View):
     """
     个人中心修改密码

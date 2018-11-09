@@ -91,9 +91,9 @@ $(function(){
             async: true,
             success: function(data) {
                 if(data.password1){
-                    Dml.fun.showValidateError($("#pwd"), data.password1);
+                    Dml.fun.showValidateError($("#password1"), data.password1);
                 }else if(data.password2){
-                    Dml.fun.showValidateError($("#repwd"), data.password2);
+                    Dml.fun.showValidateError($("#password2"), data.password2);
                 }else if(data.status == "success"){
                     Dml.fun.showTipsDialog({
                         title:'提交成功',
@@ -101,8 +101,8 @@ $(function(){
                     });
                     Dml.fun.winReload();
                 }else if(data.msg){
-                    Dml.fun.showValidateError($("#pwd"), data.msg);
-                    Dml.fun.showValidateError($("#repwd"), data.msg);
+                    Dml.fun.showValidateError($("#password1"), data.msg);
+                    Dml.fun.showValidateError($("#password2"), data.msg);
                 }
             }
         });
