@@ -45,7 +45,7 @@
                                 </dl>
                                 <div class="btn">
 	                                <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
-	                                <a class="fr" href="/logout/">退出</a>
+	                                <a class="fr" href="{% url 'user_logout' %}">退出</a>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
             <li ><a href="{% url 'users:my_courses' %}">我的课程</a></li>
             <li ><a href="{% url 'users:my_fav_orgs' %}">机构收藏</a></li>
             <li >
-                <a href="usercenter-message.html" style="position: relative;">
+                <a href="{% url 'users:my_message' %}" style="position: relative;">
                     我的消息
                 </a>
             </li>
@@ -320,7 +320,7 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "/org/add_fav/",
+                url: "{% url 'org:org_add_fav' %}",
                 data: {
                     fav_type: 1,
                     fav_id: favid,
@@ -340,7 +340,7 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "/org/add_fav/",
+                url: "{% url 'org:org_add_fav' %}",
                 data: {
                     fav_type: 3,
                     fav_id: favid,
@@ -361,11 +361,11 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "/org/add_fav/",
+                url: "{% url 'org:org_add_fav' %}",
                 data: {
                     fav_type: 2,
                     fav_id: favid,
-                    csrfmiddlewaretoken: '799Y6iPeEDNSGvrTu3noBrO4MBLv6enY'
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 async: true,
                 success: function (data) {

@@ -16,8 +16,8 @@
       关于表单验证：将表单(比如RegisterForm)传回前端页面，表单中对应的字段会自动生成相应的输入框，而且标签的name都和RegisterForm字段名对应
   </div>
     <div>
-        对于每个视图都有get和post两种方式访问，get访问是从其他页面点击而到达url，分配到此视图，而post是该视图所对应的页面上表单提交到达url，分配到此视图，
-        html，url，视图是松散的耦合关系
+        对于每个视图都有get和post两种方式访问，get访问是从其他页面点击而到达url，分配到此视图，而post是该视图所对应的页面上表单提交到达url，
+        分配到此视图，html，url，视图是松散的耦合关系，有url，就有视图，但视图不一定返回页面，他有可能返回js信息，比如添加收藏
     </div>
     <div>
         在后端视图views中对前端传来的数据进行操作，前端访问后端视图的方式有get和post，提取数据的方式为：request.GET.get(),和
@@ -50,6 +50,13 @@
                 return self.usercourse_set.all()
         可以在前端直接调用这个方法{% for learn_user in course.get_learn_users %}{{ learn_user.user.image }}{% endfor %}
         从而可以拿到学这门course的user的image
+
+        但是如果遇到循环引用的情况则不能这样做：比如operation.models引用了Users的UserProfile,而UserMessage定义在operation.models
+        中，我们想统计user的UseMessage数量，不能再将opeation.models中的UserMessage引入到users.models，否则会造成循环引用，这就需要
+        在定义函数时再引用：
+                    def get_unread_nums(self):
+                        from operation.models import UserMessage
+                        return UserMessage.objects.filter(user=self.id).count()
     </div>
     <div>
         模板页面继承在子页面中还要有{% load staticfiles %}

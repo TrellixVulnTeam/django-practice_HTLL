@@ -1,18 +1,19 @@
 from django.shortcuts import render
 import json  # 用于修改密码格式错误时返回前端信息
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q  # Q用于并操作
 from django.views.generic.base import View  # 用于基于类的函数
 from django.contrib.auth.hashers import make_password  # 用于生成密码
-
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm, ForgetPwdForm, ModifyPwdForm, UploadImageForm
-from operation.models import UserCourse, UserFavorite
+from courses.models import Course
+from operation.models import UserCourse, UserFavorite, UserMessage
 from organization.models import CourseOrg, Teacher
 from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 
 
@@ -73,6 +74,20 @@ class LoginView(View):  # 继承View类，这个类中定义了get,post等方法
 #         return render(request, "login.html")  # 注意：从首页点击登录选项时，就是以get方式访问user_login，所以get访问方式也存在
 
 
+class LogoutView(View):
+    """
+    用户注销
+    """
+    def get(self, request):
+        logout(request)  # 这里调用了django提供的logout函数
+        # 这里不能再使用return render定向到某个页面，注销后要重定向到其他页面
+        from django.core.urlresolvers import reverse  # 引入reverse()函数,用来将url的name反解成对应的url值
+        return HttpResponseRedirect(reverse("index"))
+
+
+
+
+
 # 用户注册（基于类的视图）
 class RegisterView(View):  # 依然继承View类，改写里面的方法
     def get(self, request):
@@ -91,6 +106,12 @@ class RegisterView(View):  # 依然继承View类，改写里面的方法
             user_profile.email = user_name
             user_profile.password = make_password(pass_word)
             user_profile.save()
+
+            # 写入欢迎注册消息
+            user_message = UserMessage()
+            user_message.user = user_profile.id
+            user_message.message = "欢迎注册！"
+            user_message.save()
 
             # send_register_email('username', 'register')
             send_register_email(user_name, 'register')
@@ -259,8 +280,44 @@ class MyFavoriteTeachersView(LoginRequiredMixin, View):
                       )
 
 
+class MyFavoriteCoursesView(LoginRequiredMixin, View):
+    """
+    用户收藏的课程
+    """
+    def get(self, request):
+        user = request.user
+
+        courses_list = []  # 设定一个数组用于存放收藏的机构
+        user_fav_courses = UserFavorite.objects.filter(user=user, fav_type=1)
+        for course in user_fav_courses:
+            course_id = course.fav_id
+            fav_course = Course.objects.get(id=course_id)
+            courses_list.append(fav_course)
+        return render(request, 'usercenter-fav-course.html', {
+            'user_fav_courses': courses_list
+        }
+                      )
 
 
+class MyMessageView(LoginRequiredMixin, View):
+    """
+    用户消息
+    """
+    def get(self, request):
+        all_messages = UserMessage.objects.filter(user=request.user.id)
+        # 对课程机构进行分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        # Provide Paginator with the request object for complete querystring generation
+        p = Paginator(all_messages, 5, request=request)  # 第一个是待分页对象，第二个是每页显示数量，
+
+        messages = p.page(page)
+        return render(request, 'usercenter-message.html', {
+            'all_messages': messages
+        }
+                      )
 
 
 
