@@ -183,7 +183,14 @@
             m = {{ forloop.counter }}
         {% endfor %}
         forloop.counter表示当前循环次数，如果想要在它的基础上进行改变，用add:{{ forloop.counter|add:2 }},这个在首页轮播图
-        展示轮播课程时用到
+        展示轮播课程时用到,还可以用到在页面中排列的时候，每一行排5项，需要判断当前循环次数是否可以被5整除：
+        <li class="{% if forloop.counter|divisibleby:5 %}five{% endif %}"></li>
+    </div>
+    <div>
+        我们对首页index配置了对应的视图函数IndexView(),这个视图可以返回首页所需显示的全部数据。但是登陆视图LoginView()原本也要
+        返回到index页，如果在LoginView()中直接用return render(request, 'index.html'),那它需要向index.html传递所需要的数
+        据，否则index页面无法显示。这是还是需要用HttpResponseRedirect结合reverse函数来对index重定向：
+        return HttpResponseRedirect(reverse("index")) 才可以正常显示
     </div>
 
 

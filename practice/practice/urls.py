@@ -47,6 +47,7 @@ urlpatterns = [
     # 课程组
     url(r'^courses/', include('courses.urls', namespace='courses')),
 
+
     # 配置上传文件的访问处理，因为有的图片是放在media中，不是static中，所以要重新配置
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
@@ -55,3 +56,6 @@ urlpatterns = [
 
 
 ]
+
+# 全局404页面配置，名字必须叫handler404
+handler404 = 'users.views.page_not_found'
