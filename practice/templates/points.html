@@ -176,6 +176,15 @@
         这里的科目有学习人数，在我们自己的实验科目中也要有这个模型，记录做这个实验的学生人数，不过我们的实验和学生是直接连接，字段
         不是人数，这样就可以用count()函数来统计，这里的字段是人数，所以要点击量需要在每次视图操作中加1
     </div>
+    <div>
+        django的模板语言中常用到的for循环：{% for xxx in all_xxx %}{% endfor %}，可以在每次循环中得到列表中的单个项，但是
+        无法得到当前的循环次数，这就要用到一个新的django模板语言：forloop.counter
+        {% for xxx in all_xxx %}
+            m = {{ forloop.counter }}
+        {% endfor %}
+        forloop.counter表示当前循环次数，如果想要在它的基础上进行改变，用add:{{ forloop.counter|add:2 }},这个在首页轮播图
+        展示轮播课程时用到
+    </div>
 
 
 

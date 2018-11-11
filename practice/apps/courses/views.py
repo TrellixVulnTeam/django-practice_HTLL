@@ -76,10 +76,13 @@ class CourseInfoView(LoginRequiredMixin, View):  # 继承LoginRequireMixin来验
     """
     def get(self, request, course_id):
         course = Course.objects.get(id=course_id)
+        course.click_nums += 1
+        course.save()
         # 查询用户是否已经关联该课程
         user_course = UserCourse.objects.filter(user=request.user, course=course)
         if not user_course:  # 若没有关联，就将其关联，表示用户学习了该课程
             user_course = UserCourse(user=request.user, course=course)
+
             user_course.save()
         # 取出所有user的id
         user_courses = UserCourse.objects.filter(course=course)

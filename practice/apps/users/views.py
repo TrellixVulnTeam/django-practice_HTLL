@@ -6,7 +6,7 @@ from django.db.models import Q  # Q用于并操作
 from django.views.generic.base import View  # 用于基于类的函数
 from django.contrib.auth.hashers import make_password  # 用于生成密码
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
-from .models import UserProfile, EmailVerifyRecord
+from .models import UserProfile, EmailVerifyRecord, Banner
 from .forms import LoginForm, RegisterForm, ForgetPwdForm, ModifyPwdForm, UploadImageForm
 from courses.models import Course
 from operation.models import UserCourse, UserFavorite, UserMessage
@@ -15,6 +15,24 @@ from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
+
+
+class IndexView(View):
+    """
+    首页视图函数
+    """
+    def get(self, request):
+        all_banners = Banner.objects.all().order_by('index')
+        courses = Course.objects.filter(is_banner=False)[:5]
+        banner_courses = Course.objects.filter(is_banner=True)[:3]
+        course_orgs = CourseOrg.objects.all()[:15]
+        return render(request, 'index.html', {
+            'all_banners': all_banners,
+            'courses': courses,
+            'banner_courses': banner_courses,
+            'course_orgs': course_orgs
+
+        })
 
 
 # 这里自定义一个登录验证逻辑，是对系统逻辑ModelBackend的authenticate方法的改写
@@ -305,6 +323,8 @@ class MyMessageView(LoginRequiredMixin, View):
     """
     def get(self, request):
         all_messages = UserMessage.objects.filter(user=request.user.id)
+        for message in all_messages:
+            message.has_read = True  # 清空所有未读消息
         # 对课程机构进行分页
         try:
             page = request.GET.get('page', 1)

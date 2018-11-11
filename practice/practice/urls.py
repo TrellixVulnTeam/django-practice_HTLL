@@ -21,12 +21,12 @@ from django.views.static import serve  # 引入处理静态文件的函数
 from practice.settings import MEDIA_ROOT  # 引入MEDIA根目录
 
 # from users.views import user_login  # 引入基于函数的登录验证
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, \
+from users.views import IndexView, LoginView, RegisterView, ActiveUserView, ForgetPwdView, \
     ResetView, LogoutView  # 引入基于类的登录验证
 from organization.views import OrgView
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
-    url('^$', TemplateView.as_view(template_name="index.html"), name="index"),  # 这里用TemplateView类中的as_view方法
+    url('^$', IndexView.as_view(), name="index"),  # 这里用TemplateView类中的as_view方法
     # url('^user_login/$', user_login, name="user_login")  # 基于函数的登录验证
     url('^user_login/', LoginView.as_view(), name="user_login"),  # 注意调用基于类的方法时要加上括号
     url('^user_logout/', LogoutView.as_view(), name="user_logout"),

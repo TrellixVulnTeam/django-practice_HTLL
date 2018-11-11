@@ -25,7 +25,7 @@ class UserProfile(AbstractUser):
 
     def get_unread_nums(self):
         from operation.models import UserMessage
-        return UserMessage.objects.filter(user=self.id).count()
+        return UserMessage.objects.filter(user=self.id, has_read=False).count()  # 统计未读消息数量
 
 
 
