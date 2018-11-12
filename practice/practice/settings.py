@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))
 SECRET_KEY = 'qc=90%5uiueing0r_hdcxpd93k_j&0l1z3fw@0&45^a3-3may*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -154,3 +154,7 @@ EMAIL_FROM = "445001186@qq.com"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# 设置静态文件的路径（DEBUG=True的情况下）
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

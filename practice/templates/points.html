@@ -192,6 +192,63 @@
         据，否则index页面无法显示。这是还是需要用HttpResponseRedirect结合reverse函数来对index重定向：
         return HttpResponseRedirect(reverse("index")) 才可以正常显示
     </div>
+    <div>
+        浏览器调试：F12调出开发者模式，点击网络项，产看所有或某种文件加载情况
+    </div>
+    <div>
+        当settings中的DEBUG = True时，页面的静态文件由STATICFILES_DIRS = ()来确定，当DEBUG改为False时则该路径失效，因为生产
+        状态时静态文件不由django服务器提供。由HTTP服务器提供。若这时依然想要django服务器载入，则要像设置media路径一样设置static路
+        径。
+        生产环境下：当访问页面的url不对时，会导航到404页面，当任何一个页面的django函数出现问题会导航到500页面
+    </div>
+    <div>
+        常见的web攻击：
+        1.sql攻击（在表单中加入sql语句，绕过数据库登录验证）
+            非法读取，篡改，删除数据库中的数据；
+            盗取用户的给雷敏感信息；
+            通过修改数据库来修改网页上的内容；
+            注入木马；
+
+        实例：一种不安全的登录视图
+class LoginUnsafeView(View):
+    def get(self, request):
+        return render(request, "login.html")
+
+    def post(self, request):
+        user_name = request.POST.get("username", "")
+        pass_word = request.POST.get("password", "")
+
+        import MySQLdb
+        conn = MySQLdb.connect(host="127.0.0.1", user='root', password='yk352710', db='test_django', charset='utf8')
+        cursor = conn.cursor()
+        sql_select = "select * from users_userprofile where email='{0}' and password='{1}'".format(user_name, pass_word)
+
+        result = cursor.execute(sql_select)
+        for row in cursor.fetchall():
+            # 检测到用户存在
+            pass
+        这个视图逻辑上没有错，但无法防范sql注入，当前端页面用户名输入：' OR 1=1#，密码任意时，因为由或逻辑且1=1永远成立，后端判断用户名它
+        会认证通过；
+        在username = request.POST.get('') ，这种语句中也可以通过sql注入进行特殊符号的加入，所以我们在用这种语句的时候要对输入
+        信息进行检查，比如用正则表达式先匹配一下是否为合法格式
+        用django自带的orm查询user = UserProfile.objects.get(Q(username=username) | Q(email=username))
+        或用模型表单验证字段格式时，会自带将sql语句的符号转译为其他字符，防止sql注入机制。
+
+        2.xss攻击：（Cross Site Scripting）跨站脚本攻击
+        在url中若有用户添加的信息：比如course_id,org_id,course_name什么的，这些信息要传递到后台逻辑视图中，但如果手动将这些信息修改掉，改为
+        某些js代码：http://bank.com/product/list/?name=<script>x=document.cookie;alert(x);</script>（这里只是显示cookie）
+        这样，用户的cookie将会泄露。
+        方法：1.首先代码里对用户输入的地方和变量都需要仔细检查长度和对"<",">",";"等符号进行转译过滤
+             2.通过使cookie和系统ip绑定来降低cookie泄露后的危险
+             3.尽量使用POST而非GET提交表单
+
+
+        3.csrf攻击：(Cross-site request forgery)跨站请求伪造
+        在用户访问可以转账的网站并没有关闭窗口，浏览器中保存有转账窗口的cookie，这时又打开了新的危险窗口，危险窗口中会带有访问未关闭的转账窗口并
+        向某账户转账的js代码，则浏览器就会用保存的cookie访问转账网站并进行转账；
+        方法是访问转账网站时提交的表单需要带上csrf校验码，黑客无法伪造csrf校验码，只有校验码正确网站才会进行相关操作。
+
+    </div>
 
 
 

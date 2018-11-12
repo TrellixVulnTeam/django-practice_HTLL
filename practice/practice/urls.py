@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView  # 表示处理静态文件,引入TemplateView类
 import xadmin
 from django.views.static import serve  # 引入处理静态文件的函数
-from practice.settings import MEDIA_ROOT  # 引入MEDIA根目录
+from practice.settings import MEDIA_ROOT, STATIC_ROOT  # 引入MEDIA根目录, STATIC根目录
 
 # from users.views import user_login  # 引入基于函数的登录验证
 from users.views import IndexView, LoginView, RegisterView, ActiveUserView, ForgetPwdView, \
@@ -29,6 +29,7 @@ urlpatterns = [
     url('^$', IndexView.as_view(), name="index"),  # 这里用TemplateView类中的as_view方法
     # url('^user_login/$', user_login, name="user_login")  # 基于函数的登录验证
     url('^user_login/', LoginView.as_view(), name="user_login"),  # 注意调用基于类的方法时要加上括号
+
     url('^user_logout/', LogoutView.as_view(), name="user_logout"),
 
     url('^register/', RegisterView.as_view(), name="user_register"),
@@ -52,10 +53,16 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
 
+    url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}),
+
+
 
 
 
 ]
 
 # 全局404页面配置，名字必须叫handler404
+handler404 = 'users.views.page_not_found'
+
+# 全局500页面配置，名字必须叫handler500
 handler404 = 'users.views.page_not_found'

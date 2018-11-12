@@ -23,6 +23,7 @@ class IndexView(View):
     首页视图函数
     """
     def get(self, request):
+
         all_banners = Banner.objects.all().order_by('index')
         courses = Course.objects.filter(is_banner=False)[:6]
         banner_courses = Course.objects.filter(is_banner=True)[:4]
@@ -353,7 +354,16 @@ def page_not_found(request):
     return response
 
 
-
+def page_error(request):
+    """
+    全局500视图函数
+    :param request:
+    :return:
+    """
+    from django.shortcuts import render_to_response
+    response = render_to_response('500.html', {})
+    response.status_code = 500
+    return response
 
 
 
