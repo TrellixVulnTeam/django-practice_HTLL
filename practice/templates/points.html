@@ -189,7 +189,7 @@
     <div>
         我们对首页index配置了对应的视图函数IndexView(),这个视图可以返回首页所需显示的全部数据。但是登陆视图LoginView()原本也要
         返回到index页，如果在LoginView()中直接用return render(request, 'index.html'),那它需要向index.html传递所需要的数
-        据，否则index页面无法显示。这是还是需要用HttpResponseRedirect结合reverse函数来对index重定向：
+        据，否则index页面无法正常显示。这是还是需要用HttpResponseRedirect结合reverse函数来对index重定向：
         return HttpResponseRedirect(reverse("index")) 才可以正常显示
     </div>
     <div>
@@ -248,6 +248,45 @@ class LoginUnsafeView(View):
         向某账户转账的js代码，则浏览器就会用保存的cookie访问转账网站并进行转账；
         方法是访问转账网站时提交的表单需要带上csrf校验码，黑客无法伪造csrf校验码，只有校验码正确网站才会进行相关操作。
 
+    </div>
+
+    <div>
+        media配置在7-3节 课程机构列表数据展示1
+    </div>
+    <div>
+        pycharm中Directory和python package的区别
+        Directory：
+        Dictionary在pycharm中就是一个文件夹，放置资源文件，对应于在进行JavaWeb开发时用于放置css/js文件的目录，或者说在进行物体识别时，
+        用来存储背景图像的文件夹。该文件夹其中并不包含_ _ init.py_ _文件。
+        python package：
+        对于Python package 文件夹而言，与Dictionary不同之处在于其会自动创建_ _ init.py_ _文件。
+        简单的说，python package就是一个目录，其中包括一组模块和一个_ _ init.py_ _文件。
+    例：
+    Image/
+        _init _.py
+        jpg.py
+        tiff.py
+        bmp.py
+
+    只要image目录是我们程序目录的子目录，我们就可以导入image目录下的任意模块来为我们所用，使用时可如下：
+        import Image.bmp
+        too = Image.bmp.read("a.bmp")
+
+
+
+    _ _ init_ _.py
+
+    该文件与Python的import机制有关，这关乎到你的哪些.py文件是对外可访问的。有些时候，如果一个包下有很多模块，在调用方import如此多模块是很费事，
+        且不优雅的，此时可以通过修改_ _ init_ _.py来完成该任务.在_ _ init_ .py中定义特殊变量_ all_ ,将要包含的模块复制给该变量，
+        例如在Image/ _ init_ .py中定义 all _=[‘tiff’,’bmp’,’jpg’],这里的all 对应的就是 from …import * 中*代指的模块，
+        此时在引用方使用如下语句：
+        from image import *
+        tool = tiff.read('a.tiff')
+        _ _ init_ .py可以为空，当其为空时，from Image import * 将Image包下所有的模块都进行引用，如果想要控制引用的模块，则可以自行定义 all _
+
+    </div>
+    <div>
+        整个项目的app分类设计主要由开发者的经验来决定，根据项目的功能，运行机制来设计app分工
     </div>
 
 

@@ -1,6 +1,5 @@
 import xadmin
-from  xadmin import views
-
+from xadmin import views
 from .models import EmailVerifyRecord, Banner
 
 
@@ -31,3 +30,4 @@ xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
 xadmin.site.register(Banner, BannerAdmin)
 xadmin.site.register(views.BaseAdminView, BaseSetting)
 xadmin.site.register(views.CommAdminView, GlobalSettings)
+

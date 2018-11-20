@@ -218,7 +218,7 @@
 
 <script type="text/javascript" src="{% static "js/plugins/jquery.raty.js" %}"></script>
 <script type="text/javascript">
-    //收藏分享
+
 //收藏分享
 function add_fav(current_elem, fav_id, fav_type){
     $.ajax({
@@ -231,7 +231,7 @@ function add_fav(current_elem, fav_id, fav_type){
             xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
             //因为没有form，无法设置csrftoken，只能在这里设置
         },
-        success: function(data) {
+        success: function(data) {  //success是请求成功的回调函数，所谓请求成功是指得到了后端处理的返回信息
             if(data.status == 'fail'){
                 if(data.msg == '用户未登录'){
                     window.location.href="{% url 'user_login' %}";

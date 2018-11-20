@@ -151,10 +151,10 @@ EMAIL_HOST_USER = "445001186@qq.com"
 EMAIL_HOST_PASSWORD = "YKK3527135271"
 EMAIL_USE_TIS = False
 EMAIL_FROM = "445001186@qq.com"
-
+# 资源文件路径配置，资源文件路径只能有一个
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # 设置静态文件的路径（DEBUG=True的情况下）
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')

@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView  # 表示处理静态文件,引入TemplateView类
 import xadmin
 from django.views.static import serve  # 引入处理静态文件的函数
-from practice.settings import MEDIA_ROOT, STATIC_ROOT  # 引入MEDIA根目录, STATIC根目录
+from practice.settings import MEDIA_ROOT #STATIC_ROOT  # 引入MEDIA根目录, STATIC根目录
 
 # from users.views import user_login  # 引入基于函数的登录验证
 from users.views import IndexView, LoginView, RegisterView, ActiveUserView, ForgetPwdView, \
@@ -53,7 +53,7 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
 
-    url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}),
+    # url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}),
 
 
 
